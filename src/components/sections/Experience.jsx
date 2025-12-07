@@ -1,4 +1,9 @@
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const experienceData = [
   {
@@ -6,10 +11,10 @@ const experienceData = [
     company: 'Elegans Solution',
     dates: 'Sep 2024 – Oct 2025',
     bullets: [
-      'Orchestrated the design and deployment of Eva Lite, a production-ready AI assistant using FastAPI, vLLM, Redis, ChromaDB, XTTS, and GPU-aware microservices.',
-      'Built Docker Compose–based GPU-aware infrastructure, CI automation, and monitoring with Sentry & Prometheus to keep systems observable and reliable.',
-      'Implemented AI optimization strategies (LoRA, quantization, pruning, distillation) to keep infrastructure costs under control.',
-      'Mentored engineers and interns in backend, DevOps, and applied AI systems.',
+      'Designed & deployed Eva Lite (AI assistant) using FastAPI, vLLM, and GPU microservices.',
+      'Built GPU-aware infrastructure, CI automation, and monitoring (Sentry, Prometheus).',
+      'Applied AI optimizations (LoRA, quantization) to reduce infrastructure costs.',
+      'Mentored engineers in backend, DevOps, and applied AI.',
     ],
   },
   {
@@ -17,56 +22,58 @@ const experienceData = [
     company: 'Postulate Info Tech',
     dates: 'Jun 2023 – Jul 2023',
     bullets: [
-      'Built a full-stack web app using Pug, CSS, Node.js, Express.js, MongoDB with real-time APIs for dynamic data rendering.',
-      'Collaborated with a team of interns to deliver features on time with smooth communication and coordination.',
+      'Built a full-stack web app with Pug, Node.js, Express.js, and MongoDB.',
+      'Collaborated with a team of interns to deliver features on time.',
     ],
   },
 ];
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.3,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 50 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-    },
-  },
-};
-
 const Experience = () => {
+  const container = useRef();
+
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container.current,
+        start: 'top 80%',
+      },
+    });
+
+    tl.from('.experience-title', {
+      y: 50,
+      opacity: 0,
+      duration: 0.7,
+      ease: 'power3.out'
+    }, 0)
+    .from('.experience-item', {
+      y: 50,
+      opacity: 0,
+      duration: 0.6,
+      ease: 'power2.out',
+      stagger: 0.3,
+    }, 0.2);
+  }, { scope: container });
+
   return (
-    <section id="experience" className="py-20">
+    <section id="experience" className="py-20" ref={container}>
       <div className="container max-w-5xl">
-        <div className="text-center">
+        <div className="text-center experience-title">
           <h2 className="text-3xl font-bold text-foreground tracking-tight">Experience</h2>
-          <div className="mt-2 h-1 w-20 rounded-full bg-gradient-to-r from-primary to-indigo-500 mx-auto" />
+          <div className="mt-2 h-1 w-20 rounded-full bg-primary mx-auto" />
         </div>
-        <motion.div
-          className="relative mt-12 max-w-3xl mx-auto space-y-10 before:absolute before:left-4 before:top-0 before:h-full before:w-px before:bg-gradient-to-b before:from-primary/40 before:to-transparent"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+        <div
+          className="relative mt-12 max-w-3xl mx-auto space-y-10 before:absolute before:left-4 before:top-0 before:h-full before:w-px before:bg-gradient-to-b before:from-primary before:to-transparent" // Increased contrast
         >
           {experienceData.map((job, index) => (
-            <motion.div
+            <div
               key={index}
-              className="relative ml-10 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-primary/5 backdrop-blur"
-              variants={itemVariants}
+              className="relative ml-10 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur experience-item"
+              onMouseEnter={(e) => gsap.to(e.currentTarget, { y: -6, duration: 0.3 })}
+              onMouseLeave={(e) => gsap.to(e.currentTarget, { y: 0, duration: 0.3 })}
             >
-              <span className="absolute -left-10 top-8 inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/30 bg-background text-xs text-muted-foreground">{index + 1}</span>
+              <div className="absolute -left-10 top-8 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold shadow-md"> {/* Accent-colored dot with number */}
+                {index + 1}
+              </div>
               <div className="flex justify-between items-baseline">
                 <h3 className="text-xl font-bold text-card-foreground">{job.title}</h3>
                 <p className="text-sm text-muted-foreground">{job.dates}</p>
@@ -77,9 +84,9 @@ const Experience = () => {
                   <li key={i}>{bullet}</li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

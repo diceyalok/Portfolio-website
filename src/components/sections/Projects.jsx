@@ -1,60 +1,61 @@
-import { motion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { FiExternalLink, FiGithub } from 'react-icons/fi';
+import { Badge } from '../ui/badge';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const projectsData = [
     {
-        name: 'Picsum Explorer – Immersive React Image Gallery',
-        tags: ['React', 'Vite', 'Tailwind CSS', 'Web Audio API'],
-        description: 'A beautiful, immersive gallery built with React, Vite, and Tailwind CSS for exploring the Lorem Picsum collection.',
+        name: 'Picsum Explorer – React Image Gallery',
+        tags: ['React', 'Vite', 'Tailwind CSS', 'Web Audio API', 'Framer Motion'],
+        description: 'An immersive gallery for exploring the Lorem Picsum collection with a masonry layout and ambient focus mode.',
         bullets: [
-            'Infinite scroll with Intersection Observer for smooth, automatic loading',
-            'Masonry/Pinterest-style layout that adapts to varying image sizes',
-            'Unsplash-style blur-up image loading with thumbnails → full-resolution fade-in',
-            'Ambient Focus Mode with fullscreen carousel, smooth crossfades, dimmed background, and soft brown-noise audio',
-            'Optimized with lazy loading, preloading, and responsive design for a fast, fluid experience',
+            'Infinite scroll with Intersection Observer for smooth, automatic loading.',
+            'Unsplash-style blur-up image loading with a fade-in effect.',
+            'Ambient Focus Mode with a fullscreen carousel and soft brown-noise audio.',
+            'Optimized with lazy loading, preloading, and a responsive design.',
         ],
         liveLink: 'https://picsum-explorer.netlify.app/',
         codeLink: '#',
     },
     {
-        name: 'Notes App – React + Tailwind, Theme Engine & Shortcuts',
-        tags: ['React', 'Tailwind CSS'],
+        name: 'Notes App – React + Tailwind',
+        tags: ['React', 'Tailwind CSS', 'Vite', 'Zustand'],
         description: 'A fast, aesthetic notes app focused on speed, theming, and a smooth writing experience.',
         bullets: [
-            'Create notes with titles, details, tags, and media (image/video via URL)',
-            'Custom theme engine with animated glows and preset palettes, persisted using localStorage',
-            'Powerful tag system with multi-tag filtering and one-click “Clear Filters”',
-            'Keyboard shortcuts (Ctrl/Cmd + K to focus title, Ctrl/Cmd + Enter to submit note)',
-            'Fully client-side and ideal for quick, personal note-taking',
+            'Create notes with titles, details, tags, and media URLs.',
+            'Custom theme engine with animated glows and localStorage persistence.',
+            'Powerful multi-tag filtering system.',
+            'Keyboard shortcuts for quick note creation and navigation.',
         ],
         liveLink: 'https://hashira-ember-nexus-codex.netlify.app',
         codeLink: '#',
     },
     {
-        name: 'Book Finder — Open Library Search App',
-        tags: ['React', 'Open Library API', 'PWA'],
-        description: 'A no-login React app for students to search Open Library by title, author, subject, or ISBN and save favorites locally.',
+        name: 'Book Finder — Open Library Search',
+        tags: ['React', 'Open Library API', 'PWA', 'Zustand'],
+        description: 'A no-login React app for searching Open Library and saving favorites locally.',
         bullets: [
-            'Multi-mode search with debounced queries and URL parameter sync',
-            'Glanceable book cards with cover, title, author, year, and details link',
-            'Resilient UX with skeleton loaders, explicit empty/error states, retry, and cancelable requests',
-            'Keyboard-friendly navigation: / to focus search, arrow keys to paginate, “s” to save a focused card',
-            'Client-side filters: language chips, ebook-only toggle, and a year range slider',
-            'Favorites workspace with localStorage persistence and CSV export',
-            'Minimal PWA shell for offline-readiness and voice search using the Web Speech API',
+            'Multi-mode search with debounced queries and URL parameter sync.',
+            'Resilient UX with skeleton loaders, error states, and cancelable requests.',
+            'Client-side filters for language, ebooks, and year range.',
+            'Minimal PWA shell for offline-readiness and voice search.',
         ],
         liveLink: 'https://bookfinderall.netlify.app/',
         codeLink: '#',
     },
     {
-        name: 'Eva Lite — AI Voice & Chat Assistant (Production Project)',
-        tags: ['FastAPI', 'vLLM', 'Redis', 'ChromaDB', 'XTTS', 'Docker', 'AI'],
-        description: 'A production-ready Telegram AI assistant built with GPU-aware microservices and cost-optimized model serving.',
+        name: 'Eva Lite — AI Voice & Chat Assistant',
+        tags: ['FastAPI', 'vLLM', 'Redis', 'ChromaDB', 'Docker', 'AI'],
+        description: 'A production-ready Telegram AI assistant with GPU-aware microservices and optimized model serving.',
         bullets: [
-            'Built with FastAPI, async Python, Redis, ChromaDB, and vLLM (LLaMA-based) for reasoning-heavy responses',
-            'GPU-aware microservices for model serving, vector search, and text-to-speech (XTTS), orchestrated with Docker Compose',
-            'Applied LoRA adapters, quantization, and pruning for cost-efficient deployment',
-            'Integrated health checks, structured logging, Prometheus metrics, and Sentry alerts',
+            'Built with FastAPI, async Python, Redis, and ChromaDB.',
+            'GPU-aware microservices for model serving, vector search, and TTS.',
+            'Applied LoRA adapters and quantization for cost-efficient deployment.',
+            'Integrated health checks, structured logging, and Prometheus metrics.',
         ],
         liveLink: '#',
         codeLink: '#',
@@ -62,119 +63,206 @@ const projectsData = [
     {
         name: 'MERN E-commerce Website',
         tags: ['MongoDB', 'Express.js', 'React', 'Node.js'],
-        description: 'A full-stack e-commerce website built using the MERN stack.',
+        description: 'A full-stack e-commerce website built using the MERN stack with basic payment flow integration.',
         bullets: [
-            'Express backend for products, orders, and user management',
-            'MongoDB for efficient data storage and retrieval',
-            'Responsive React UI for browsing products and checkout flows',
-            'Basic secure payment flow integration',
+            'Express backend for products, orders, and user management.',
+            'MongoDB for efficient data storage.',
+            'Responsive React UI for browsing and checkout.',
         ],
         liveLink: '#',
         codeLink: '#',
     },
     {
-        name: 'CouponSpace – Coupon Sharing Web App',
+        name: 'CouponSpace – Coupon Sharing App',
         tags: ['HTML', 'CSS', 'JavaScript', 'Node.js', 'MongoDB'],
-        description: 'A simple coupon-sharing platform where users can share and browse coupons.',
+        description: 'A simple coupon-sharing platform where users can browse and share coupons, built with Node.js.',
         bullets: [
-            'Built with HTML, CSS, and JavaScript on the frontend',
-            'Node.js and MongoDB on the backend for storing coupons',
-            'Clean UI designed for easy browsing and future feature extension',
+            'Built with vanilla HTML, CSS, and JavaScript.',
+            'Node.js and MongoDB backend for storing coupons.',
+            'Clean UI designed for easy browsing.',
         ],
         liveLink: '#',
         codeLink: '#',
     },
 ];
 
-const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-        opacity: 1,
-        transition: {
-            staggerChildren: 0.2,
-        },
-    },
+const ProjectCard = ({ project, openPreview }) => {
+    const cardRef = useRef(null);
+
+    useGSAP(() => {
+        const card = cardRef.current;
+        const xTo = gsap.quickTo(card, "x", { duration: 0.8, ease: "power3.out" });
+        const yTo = gsap.quickTo(card, "y", { duration: 0.8, ease: "power3.out" });
+        const rTo = gsap.quickTo(card, "rotation", { duration: 0.8, ease: "power3.out" });
+
+        const handleMouseMove = (e) => {
+            const { clientX, clientY } = e;
+            const { top, left, width, height } = card.getBoundingClientRect();
+            const x = clientX - (left + width / 2);
+            const y = clientY - (top + height / 2);
+            xTo(x / 50);
+            yTo(y / 50);
+            rTo(x / 100);
+        };
+
+        const handleMouseEnter = () => {
+            gsap.to(card, { 
+                y: -10, 
+                scale: 1.02,
+                boxShadow: '0 40px 80px -20px rgba(0,0,0,0.3)',
+                duration: 0.4, 
+                ease: 'power3.out' 
+            });
+        };
+
+        const handleMouseLeave = () => {
+            gsap.to(card, { 
+                y: 0, 
+                scale: 1,
+                rotation: 0,
+                x: 0,
+                boxShadow: '0 24px 80px rgba(15,23,42,0.08)',
+                duration: 0.6, 
+                ease: 'power3.out' 
+            });
+            xTo(0);
+            yTo(0);
+            rTo(0);
+        };
+
+        card.addEventListener('mousemove', handleMouseMove);
+        card.addEventListener('mouseenter', handleMouseEnter);
+        card.addEventListener('mouseleave', handleMouseLeave);
+
+        return () => {
+            card.removeEventListener('mousemove', handleMouseMove);
+            card.removeEventListener('mouseenter', handleMouseEnter);
+            card.removeEventListener('mouseleave', handleMouseLeave);
+        };
+
+    }, { scope: cardRef });
+
+    return (
+        <div ref={cardRef} className="project-card relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-lg" style={{ willChange: 'transform' }}>
+            <div className="project-card-content flex flex-grow flex-col p-6">
+                <h3 className="text-xl font-semibold text-foreground">{project.name}</h3>
+                <p className="mt-2 text-sm text-muted-foreground h-10">{project.description}</p>
+                <div className="mt-4 flex overflow-x-auto gap-2 pb-2 no-scrollbar flex-nowrap">
+                    {project.tags.map((tag, i) => (
+                        <Badge key={i} variant="outline">{tag}</Badge>
+                    ))}
+                </div>
+                <ul className="mt-4 list-disc list-inside space-y-2 text-sm text-muted-foreground/90 flex-grow">
+                    {project.bullets.map((bullet, i) => (
+                        <li key={i}>{bullet}</li>
+                    ))}
+                </ul>
+                <div className="mt-6 flex justify-end gap-4 text-sm font-semibold">
+                    {project.liveLink && project.liveLink !== '#' && (
+                        <button
+                            type="button"
+                            onClick={() => openPreview(project)}
+                            className="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-primary-foreground transition hover:scale-105"
+                        >
+                            <FiExternalLink /> Live Preview
+                        </button>
+                    )}
+                    {project.codeLink && project.codeLink !== '#' && (
+                        <a href={project.codeLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary">
+                            <FiGithub /> View Code
+                        </a>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 };
 
-const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 0.5,
-            ease: 'easeOut',
-        },
-    },
-};
 
 const Projects = () => {
+    const [previewProject, setPreviewProject] = useState(null);
+    const container = useRef(null);
+    const modalRef = useRef(null);
+
+    useGSAP(() => {
+        const cards = gsap.utils.toArray('.project-card');
+        cards.forEach((card) => {
+            gsap.from(card, {
+                opacity: 0,
+                y: 100,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: card,
+                    start: 'top 90%',
+                }
+            });
+        });
+    }, { scope: container });
+
+    useGSAP(() => {
+        if (previewProject) {
+            gsap.fromTo(modalRef.current, { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.3 });
+        }
+    }, { dependencies: [previewProject] });
+
+    const openPreview = (project) => setPreviewProject(project);
+
+    const closePreview = () => {
+        gsap.to(modalRef.current, { opacity: 0, scale: 0.95, duration: 0.3, onComplete: () => setPreviewProject(null) });
+    };
+
     return (
-        <section id="projects" className="py-20">
-            <div className="container max-w-6xl">
-                <div className="text-center">
-                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Projects</h2>
-                    <p className="mt-2 text-muted-foreground">
-                        A selection of work that shows how I think about UX, performance, and real-world impact.
-                    </p>
-                    <div className="mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-primary to-indigo-500 mx-auto" />
-                </div>
-                <motion.div
-                    className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3"
-                    variants={containerVariants}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, amount: 0.1 }}
-                >
-                    {projectsData.map((project, index) => (
-                <motion.div
-                            key={index}
-                    className="group rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-primary/5 backdrop-blur"
-                            variants={itemVariants}
-                            whileHover={{
-                                y: -6,
-                                scale: 1.01,
-                                boxShadow: '0px 20px 45px rgba(79,70,229,0.25)',
-                            }}
-                            transition={{ type: 'spring', stiffness: 300 }}
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <h3 className="text-xl font-bold text-card-foreground">{project.name}</h3>
-                                    <p className="mt-2 text-sm text-muted-foreground">{project.description}</p>
-                                </div>
-                                <div className="h-14 w-14 rounded-2xl border border-white/15 bg-primary/10 text-primary/80 flex items-center justify-center text-sm font-semibold">
-                                    {index + 1}
-                                </div>
-                            </div>
-                            <div className="flex flex-wrap gap-2 mt-4">
-                                {project.tags.map((tag, i) => (
-                                    <span key={i} className="text-xs uppercase tracking-wide rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-muted-foreground">{tag}</span>
-                                ))}
-                            </div>
-                            <ul className="mt-4 list-disc list-inside space-y-2 text-sm text-muted-foreground/90">
-                                {project.bullets.map((bullet, i) => (
-                                    <li key={i}>{bullet}</li>
-                                ))}
-                            </ul>
-                            <div className="mt-6 flex gap-6 text-sm font-semibold">
-                                {project.liveLink && project.liveLink !== '#' && (
-                                    <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary">
-                                        <FiExternalLink />
-                                        View Live
-                                    </a>
-                                )}
-                                {project.codeLink && project.codeLink !== '#' && (
-                                    <a href={project.codeLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary">
-                                        <FiGithub />
-                                        View Code
-                                    </a>
-                                )}
-                            </div>
-                        </motion.div>
-                    ))}
-                </motion.div>
+        <section id="projects" className="relative py-20" ref={container}>
+            <div className="container max-w-6xl text-center">
+                <h2 className="text-3xl font-bold text-foreground tracking-tight">Projects</h2>
+                <p className="mt-2 text-muted-foreground">A selection of work that shows how I think about UX, performance, and real-world impact.</p>
+                <div className="mt-4 h-1 w-24 rounded-full bg-primary mx-auto" />
             </div>
+            
+            <div className="container max-w-6xl mt-16 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {projectsData.map((project, index) => (
+                    <ProjectCard key={index} project={project} openPreview={openPreview} />
+                ))}
+            </div>
+
+            {previewProject && (
+                 <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur"
+                    onClick={closePreview}
+                    ref={modalRef}
+                >
+                    <div
+                        className="relative w-full max-w-5xl mx-4 rounded-3xl border border-white/10 bg-background/95 shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                            <div>
+                                <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Live playground</p>
+                                <h3 className="text-lg font-semibold text-foreground">{previewProject.name}</h3>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={closePreview}
+                                className="rounded-full border border-white/20 px-3 py-1 text-xs text-muted-foreground hover:border-primary/50 hover:text-primary"
+                            >
+                                Close
+                            </button>
+                        </div>
+                        <div className="relative aspect-video w-full overflow-hidden rounded-b-3xl bg-black/80">
+                            <iframe
+                                src={previewProject.liveLink}
+                                title={previewProject.name}
+                                className="h-full w-full border-0"
+                                loading="lazy"
+                            />
+                            <div className="pointer-events-none absolute inset-0 ...">
+                                {/* ... (modal content) ... */}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

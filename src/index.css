@@ -9,7 +9,7 @@
     --background: 210 40% 98%;
     --foreground: 222.2 47.4% 11.2%;
 
-    --card: 0 0% 100%;
+    --card: 0 0% 100% / 0.08;
     --card-foreground: 222.2 47.4% 11.2%;
 
     --popover: 0 0% 100%;
@@ -116,4 +116,24 @@
     transform: scale(1) rotate(12deg);
     opacity: 0.9;
   }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+.form-input {
+  @apply w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground placeholder:text-muted-foreground/60;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  @apply outline-none ring-2 ring-primary/50 border-transparent;
+  box-shadow: 0 0 20px 0px hsla(221.2, 83.2%, 53.3%, 0.2);
 }
